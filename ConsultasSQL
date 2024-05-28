@@ -1,0 +1,93 @@
+
+-- Crear tabla Usuarios
+CREATE TABLE Usuarios (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    contrasena VARCHAR(100) NOT NULL
+);
+
+-- Crear tabla Viajes
+CREATE TABLE Viajes (
+    viaje_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    destino VARCHAR(100) NOT NULL,
+    fecha_salida DATE NOT NULL,
+    fecha_regreso DATE NOT NULL,
+    estado VARCHAR(50) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Usuarios(user_id)
+);
+
+-- Crear tabla Gastos
+CREATE TABLE Gastos (
+    gasto_id INT PRIMARY KEY AUTO_INCREMENT,
+    viaje_id INT NOT NULL,
+    concepto VARCHAR(255) NOT NULL,
+    monto DECIMAL(10, 2) NOT NULL,
+    fecha DATE NOT NULL,
+    aprobado BOOLEAN NOT NULL,
+    FOREIGN KEY (viaje_id) REFERENCES Viajes(viaje_id)
+);
+
+-- Crear tabla Reservas_Vehiculos
+CREATE TABLE Reservas_Vehiculos (
+    reserva_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    vehiculo VARCHAR(50) NOT NULL,
+    fecha_reserva DATE NOT NULL,
+    estado VARCHAR(50) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Usuarios(user_id)
+);
+
+-- Insertar datos en la tabla Usuarios
+INSERT INTO Usuarios (nombre, apellido, email, contrasena) VALUES 
+('Juan', 'Pérez', 'juan.perez@arcor.com', 'password123'),
+('María', 'García', 'maria.garcia@arcor.com', 'password456'),
+('Carlos', 'López', 'carlos.lopez@arcor.com', 'password789');
+
+-- Insertar datos en la tabla Viajes
+INSERT INTO Viajes (user_id, destino, fecha_salida, fecha_regreso, estado) VALUES 
+(1, 'Nueva York', '2024-06-01', '2024-06-10', 'Aprobado'),
+(2, 'Londres', '2024-07-15', '2024-07-20', 'Pendiente'),
+(3, 'Tokio', '2024-08-05', '2024-08-15', 'Aprobado');
+
+-- Insertar datos en la tabla Gastos
+INSERT INTO Gastos (viaje_id, concepto, monto, fecha, aprobado) VALUES 
+(1, 'Hotel', 1500.00, '2024-06-02', true),
+(1, 'Transporte', 200.00, '2024-06-03', true),
+(2, 'Comida', 300.00, '2024-07-16', false),
+(3, 'Hotel', 1200.00, '2024-08-06', true);
+
+-- Insertar datos en la tabla Reservas_Vehiculos
+INSERT INTO Reservas_Vehiculos (user_id, vehiculo, fecha_reserva, estado) VALUES 
+(1, 'Toyota Corolla', '2024-05-20', 'Confirmado'),
+(2, 'Ford Focus', '2024-05-22', 'Pendiente'),
+(3, 'Chevrolet Cruze', '2024-05-25', 'Confirmado');
+
+-- Verificar datos en la tabla Usuarios
+SELECT * FROM Usuarios;
+-- Verificar datos en la tabla Viajes
+SELECT * FROM Viajes;
+
+-- Verificar datos en la tabla Gastos
+SELECT * FROM Gastos;
+
+-- Verificar datos en la tabla Reservas_Vehiculos
+SELECT Viajes.*, Usuarios.nombre
+FROM Viajes
+LEFT JOIN Usuarios ON Viajes.user_id = Usuarios.user_id;
+
+-- Verificar Reservas_Vehiculos con Usuarios 
+SELECT Reservas_Vehiculos.*, Usuarios.nombre
+FROM Reservas_Vehiculos
+LEFT JOIN Usuarios ON Reservas_Vehiculos.user_id = Usuarios.user_id;
+
+-- Eliminar las reservas de vehículos del usuario
+DELETE FROM Reservas_Vehiculos WHERE user_id = 1;
+
+-- Actualizar las reservas de vehículos para que no estén asociadas al usuario
+UPDATE Reservas_Vehiculos SET user_id = NULL WHERE user_id = 1;
+
+-- Selecciona los datos de la tabla Reservas_Vehiculos
+SELECT * FROM Reservas_Vehiculos ;
